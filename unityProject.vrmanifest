@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.boxtemplate.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "D:\\Dev\\gymnase_connecte\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\Nassim\\Documents\\ING4\\PPE\\FunChimie\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "BoxTemplate [Testing]"
