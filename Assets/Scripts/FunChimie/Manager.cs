@@ -32,7 +32,7 @@ public class Manager : MonoBehaviour
     private bool timesUp = false;  // no more time 
 
     //Chrono
-    private float time = 55f;
+    private float time = 45f;
 
     // spaces
     private GameObject HydroSpace1;
@@ -45,6 +45,13 @@ public class Manager : MonoBehaviour
     // Links
     public GameObject Link1;
     public GameObject Link2;
+
+    // score
+    public int nbStars;
+
+    public GameObject star1;
+    public GameObject star2;
+    public GameObject star3;
 
     
     // Start is called before the first frame update
@@ -99,6 +106,9 @@ public class Manager : MonoBehaviour
             WallW.GetComponent<Renderer>().material.color=red;
         }
 
+        // update stars
+        UpdateStars();
+
         
         good1 = HydroAtome1.GetComponent<NewDD>().getGood();
         placedHydro1 = HydroAtome1.GetComponent<NewDD>().getPlaced();
@@ -145,17 +155,17 @@ public class Manager : MonoBehaviour
         GUIStyle guiStyle = new GUIStyle(); //create a new variable
         guiStyle.fontSize = 50; //change the font size
         guiStyle.normal.textColor = white;
-        GUI.Label(new Rect(40,310,50,25), "Temps restant: "+time.ToString(),guiStyle);
+        GUI.Label(new Rect(40,320,50,25), "Temps restant: "+time.ToString("F0"),guiStyle);
 
         if (win) {
-            guiStyle.fontSize = 50; //change the font size
+            guiStyle.fontSize = 40; //change the font size
             guiStyle.normal.textColor = green;
-            GUI.Label(new Rect(40,60,50,25), "VOUS AVEZ GAGNE",guiStyle);
+            GUI.Label(new Rect(40,30,50,25), "VOUS AVEZ GAGNE",guiStyle);
         }
         else if (timesUp){
-            guiStyle.fontSize = 50; //change the font size
+            guiStyle.fontSize = 40; //change the font size
             guiStyle.normal.textColor = red;
-            GUI.Label(new Rect(40,60,50,25), "TEMPS ECOULE! VOUS AVEZ PERDU!",guiStyle);
+            GUI.Label(new Rect(40,30,50,25), "TEMPS ECOULE!",guiStyle);
         }
     }
 
@@ -178,6 +188,18 @@ public class Manager : MonoBehaviour
         }
         else {
             Link2.SetActive(false);
+        }
+    }
+
+    public void UpdateStars() {
+        if (time < 30) {
+            star1.SetActive(false);
+        }
+        if (time < 15) {
+            star2.SetActive(false);
+        }
+        if (time <=0) {
+            star3.SetActive(false);
         }
     }
 

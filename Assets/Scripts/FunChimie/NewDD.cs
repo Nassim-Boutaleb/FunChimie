@@ -13,7 +13,7 @@ class NewDD : MonoBehaviour
  
     public void Start() {
         originalColor = GetComponent<Renderer>().material.color;
-        Debug.Log("color:"+originalColor);
+        //Debug.Log("color:"+originalColor);
     }
    public bool getGood () {
        return good;
