@@ -1,25 +1,26 @@
 ﻿using System.Collections;
 using UnityEngine;
  
-class NewDD : MonoBehaviour
+class DDOxy : MonoBehaviour
 {
     private Color mouseOverColor = Color.blue;
-    private Color originalColor;
+    private Color originalColor; 
     private bool dragging = false;
     private float distance;
-    private bool placed=false;
-    private bool good = false;
+    private bool placed = false; // placé qq part ?
+    private bool good = false;  // bien placé ?
 
- 
+    //private Vector3 pos;
+
     public void Start() {
         originalColor = GetComponent<Renderer>().material.color;
-        Debug.Log("color:"+originalColor);
     }
-   public bool getGood () {
-       return good;
-   }
+ 
+    public bool getGood () {
+        return good;
+    }
 
-   public bool getPlaced() {
+    public bool getPlaced() {
         return placed;
     }
     
@@ -57,27 +58,27 @@ class NewDD : MonoBehaviour
             Vector3 newPos = new Vector3 (rayPoint.x,0.0f,rayPoint.z);
             transform.position = newPos;
         }
+        //pos= transform.position;
+        //Debug.Log("pos is " + pos);
     }
 
     void OnTriggerEnter(Collider other) 
 	{
 		placed = true;
-        Debug.Log("Trigger");
-        // ..and if the GameObject you intersect has the tag 'Pick Up' assigned to it..
-		if (other.gameObject.CompareTag ("Hydro") && gameObject.CompareTag ("HydroAtome"))
+        Debug.Log("Chekc");
+        if (other.gameObject.CompareTag ("Oxy") && gameObject.CompareTag ("OxyAtome"))
 		{
-			Debug.Log("HHOK");
+			Debug.Log("OxyOK");
             good = true;
-            // envoyer le signal
 		}
-        
+        //pos= transform.position;
+        //Debug.Log("pos is " + pos);
 	}
 
     void OnTriggerExit(Collider other) 
 	{
-		Debug.Log("NotOK");
+		Debug.Log("Exit");
         good=false;
         placed=false;
-        
 	}
 }
