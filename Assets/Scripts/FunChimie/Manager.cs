@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+//using WebSocketSharp;
+using Socket.Quobject.SocketIoClientDotNet.Client;
 
 public class Manager : MonoBehaviour
 {
@@ -53,6 +55,9 @@ public class Manager : MonoBehaviour
     public GameObject star2;
     public GameObject star3;
 
+    // Socket
+    private QSocket socket;
+
     
     // Start is called before the first frame update
     void Start()
@@ -85,6 +90,8 @@ public class Manager : MonoBehaviour
         OxySpace = GameObject.Find("OxyPlace");
         OxySpaceTriggered = OxySpace.GetComponent<Space>().getTriggered();
 
+        // socket
+        socket = IO.Socket ("http://localhost:8080");
         
 
     }
@@ -110,41 +117,7 @@ public class Manager : MonoBehaviour
         UpdateStars();
 
         
-        good1 = HydroAtome1.GetComponent<NewDD>().getGood();
-        placedHydro1 = HydroAtome1.GetComponent<NewDD>().getPlaced();
-
-        good2 = OxyAtome.GetComponent<DDOxy>().getGood();
-        placedOxy = OxyAtome.GetComponent<DDOxy>().getPlaced();
-
-        good3 = HydroAtome2.GetComponent<NewDD>().getGood();
-        placedHydro2 = HydroAtome2.GetComponent<NewDD>().getPlaced();
-
-        //Debug.Log("1:"+placedHydro1+""+placedHydro2+""+placedOxy);
-        if (placedHydro1 && placedHydro2 && placedOxy && time > 0) {
-            if (good1 && good2 && good3) {
-                Debug.Log("WIN");
-                WallE.GetComponent<Renderer>().material.color=green;
-                WallN.GetComponent<Renderer>().material.color=green;
-                WallS.GetComponent<Renderer>().material.color=green;
-                WallW.GetComponent<Renderer>().material.color=green;
-                win = true;
-                
-            }
-            else {
-                Debug.Log("Not OK-RED");
-                WallE.GetComponent<Renderer>().material.color=red;
-                WallN.GetComponent<Renderer>().material.color=red;
-                WallS.GetComponent<Renderer>().material.color=red;
-                WallW.GetComponent<Renderer>().material.color=red;
-            }
-        }
-        else if (time > 0) {
-            // Walls in white
-            WallE.GetComponent<Renderer>().material.color=white;
-            WallS.GetComponent<Renderer>().material.color=white;
-            WallW.GetComponent<Renderer>().material.color=white;
-            WallN.GetComponent<Renderer>().material.color=white;
-        }
+        // verif
 
         ManageLink();
     }
@@ -166,6 +139,74 @@ public class Manager : MonoBehaviour
             guiStyle.fontSize = 40; //change the font size
             guiStyle.normal.textColor = red;
             GUI.Label(new Rect(40,30,50,25), "TEMPS ECOULE!",guiStyle);
+        }
+    }
+
+    // verifier que les atomes sont bien placés
+    // se déclenche au clic sur le bouton (sinon mettre dans update pr une vérif en continu)
+    public void check () {
+        good1 = HydroAtome1.GetComponent<NewDD>().getGood();
+        placedHydro1 = HydroAtome1.GetComponent<NewDD>().getPlaced();
+
+        good2 = OxyAtome.GetComponent<DDOxy>().getGood();
+        placedOxy = OxyAtome.GetComponent<DDOxy>().getPlaced();
+
+        good3 = HydroAtome2.GetComponent<NewDD>().getGood();
+        placedHydro2 = HydroAtome2.GetComponent<NewDD>().getPlaced();
+
+        //Debug.Log("1:"+placedHydro1+""+placedHydro2+""+placedOxy);
+        if (placedHydro1 && placedHydro2 && placedOxy && time > 0) {
+            if (good1 && good2 && good3) {
+                Debug.Log("WIN");
+                WallE.GetComponent<Renderer>().material.color=green;
+                WallN.GetComponent<Renderer>().material.color=green;
+                WallS.GetComponent<Renderer>().material.color=green;
+                WallW.GetComponent<Renderer>().material.color=green;
+                win = true;
+                //LED
+                socket.On (QSocket.EVENT_CONNECT, () => {
+                    Debug.Log ("Connected");
+                    socket.Emit ("message", "Bonjour");
+                });
+
+                socket.On ("message", data => {
+                    Debug.Log ("data : " + data);
+                });
+                
+            }
+            else {
+                Debug.Log("Not OK-RED");
+                WallE.GetComponent<Renderer>().material.color=red;
+                WallN.GetComponent<Renderer>().material.color=red;
+                WallS.GetComponent<Renderer>().material.color=red;
+                WallW.GetComponent<Renderer>().material.color=red;
+                /*Delay(3000);
+                WallE.GetComponent<Renderer>().material.color=white;
+                WallN.GetComponent<Renderer>().material.color=white;
+                WallS.GetComponent<Renderer>().material.color=white;
+                WallW.GetComponent<Renderer>().material.color=white;*/
+
+                // Led
+                //LED
+                socket.On (QSocket.EVENT_CONNECT, () => {
+                    Debug.Log ("Connected");
+                    socket.Emit ("message", "mauvais");
+                });
+
+                socket.On ("message", data => {
+                    Debug.Log ("data : " + data);
+                });
+
+
+
+            }
+        }
+        else if (time > 0) {
+            // Walls in white
+            WallE.GetComponent<Renderer>().material.color=white;
+            WallS.GetComponent<Renderer>().material.color=white;
+            WallW.GetComponent<Renderer>().material.color=white;
+            WallN.GetComponent<Renderer>().material.color=white;
         }
     }
 
@@ -201,6 +242,13 @@ public class Manager : MonoBehaviour
         if (time <=0) {
             star3.SetActive(false);
         }
+    }
+
+
+
+    // Destruction socket
+    private void OnDestroy () {
+        socket.Disconnect ();
     }
 
 

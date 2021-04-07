@@ -9,15 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: d58772056b37436429704b0c3063c726
   - enabled: 1
-    path: Assets/Scenes/Maze.unity
-    guid: a9cb150b476946640b72d772c34cb3ed
-  - enabled: 1
-    path: Assets/Scenes/Barycentre.unity
-    guid: 4bf8de05f771ae4418d67ef79b93dbec
-  - enabled: 1
-    path: Assets/Scenes/PongUpgrade.unity
-    guid: 70e878768aa61c74985ac3a25bde5aac
-  - enabled: 1
-    path: Assets/Scenes/Zodiac.unity
-    guid: 02516efee9ed58c4db27b08077f6ce4e
+    path: Assets/Scenes/FunChimie.unity
+    guid: e34b73a5f36d3f548b52e006af6c9fd8
   m_configObjects: {}
