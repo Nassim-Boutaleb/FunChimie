@@ -34,7 +34,7 @@ public class Manager : MonoBehaviour
     private bool timesUp = false;  // no more time 
 
     //Chrono
-    private float time = 45f;
+    private float time = 145f;
 
     // spaces
     private GameObject HydroSpace1;
@@ -157,21 +157,24 @@ public class Manager : MonoBehaviour
         //Debug.Log("1:"+placedHydro1+""+placedHydro2+""+placedOxy);
         if (placedHydro1 && placedHydro2 && placedOxy && time > 0) {
             if (good1 && good2 && good3) {
-                Debug.Log("WIN");
+                //Debug.Log("WIN");
                 WallE.GetComponent<Renderer>().material.color=green;
                 WallN.GetComponent<Renderer>().material.color=green;
                 WallS.GetComponent<Renderer>().material.color=green;
                 WallW.GetComponent<Renderer>().material.color=green;
                 win = true;
                 //LED
-                socket.On (QSocket.EVENT_CONNECT, () => {
-                    Debug.Log ("Connected");
-                    socket.Emit ("message", "Bonjour");
-                });
-
-                socket.On ("message", data => {
-                    Debug.Log ("data : " + data);
-                });
+                //socket = IO.Socket ("http://localhost:8080");
+                
+                /*IEnumerator ExecuteAfterTime(float time)
+                {
+                    yield return new WaitForSeconds(time);
+                
+                    // Code to execute after the delay
+                    socket.Disconnect ();
+                }
+                StartCoroutine(ExecuteAfterTime(10));*/
+                
                 
             }
             else {
@@ -188,14 +191,31 @@ public class Manager : MonoBehaviour
 
                 // Led
                 //LED
-                socket.On (QSocket.EVENT_CONNECT, () => {
-                    Debug.Log ("Connected");
-                    socket.Emit ("message", "mauvais");
-                });
+                //socket = IO.Socket ("http://localhost:8080");
 
-                socket.On ("message", data => {
-                    Debug.Log ("data : " + data);
-                });
+                
+                if (!win) {
+                    socket.On (QSocket.EVENT_CONNECT, () => {
+                        if (!win) {
+                            Debug.Log ("Connected");
+                            socket.Emit ("message", "mauvais");
+                        }
+                    });
+
+                    socket.On ("message", data => {
+                        Debug.Log ("data : " + data);
+                    });
+                }
+                
+
+                /*IEnumerator ExecuteAfterTime(float time)
+                {
+                    yield return new WaitForSeconds(time);
+                
+                    // Code to execute after the delay
+                    socket.Disconnect ();
+                }
+                StartCoroutine(ExecuteAfterTime(10));*/
 
 
 
@@ -208,6 +228,19 @@ public class Manager : MonoBehaviour
             WallW.GetComponent<Renderer>().material.color=white;
             WallN.GetComponent<Renderer>().material.color=white;
         }
+
+        if (win) {
+            socket.On (QSocket.EVENT_CONNECT, () => {
+                    if (win) {
+                        Debug.Log ("ConnectedG");
+                        socket.Emit ("message", "Bonjour");
+                    }
+                });
+
+                socket.On ("message", data => {
+                    Debug.Log ("data : " + data);
+                });
+        }
     }
 
     public void ManageLink() {
@@ -218,7 +251,7 @@ public class Manager : MonoBehaviour
         
         //Debug.Log("Trigg: ");
         if (HydroSpace1Triggered && OxySpaceTriggered) {
-            Debug.Log("AZERTY");
+            //Debug.Log("AZERTY");
             Link1.SetActive(true);
         }
         else {
