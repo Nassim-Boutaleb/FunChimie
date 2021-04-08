@@ -18,6 +18,10 @@ TagManager:
   - obstacle
   - Target
   - Ball
+  - Hydro
+  - Oxy
+  - HydroAtome
+  - OxyAtome
   layers:
   - Default
   - TransparentFX
