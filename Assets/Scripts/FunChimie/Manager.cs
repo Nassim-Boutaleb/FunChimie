@@ -62,6 +62,7 @@ public class Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Get components (atoms)
         HydroAtome1 = GameObject.Find("Hydro");
         good1 = HydroAtome1.GetComponent<NewDD>().getGood();
         placedHydro1 = HydroAtome1.GetComponent<NewDD>().getPlaced();
@@ -104,6 +105,7 @@ public class Manager : MonoBehaviour
             time -= Time.deltaTime;
         }
 
+        // End of time => walls in red
         if (time <=0) {
             time=0;
             timesUp = true;
@@ -113,28 +115,31 @@ public class Manager : MonoBehaviour
             WallW.GetComponent<Renderer>().material.color=red;
         }
 
-        // update stars
+        // update stars (score)
         UpdateStars();
 
-        
-        // verif
-
+    
+        // Create links btw atoms
         ManageLink();
     }
 
 
+    // Update GUI (chrono)
     void OnGUI()
     {
+        // Update chrono
         GUIStyle guiStyle = new GUIStyle(); //create a new variable
         guiStyle.fontSize = 50; //change the font size
         guiStyle.normal.textColor = white;
         GUI.Label(new Rect(40,320,50,25), "Temps restant: "+time.ToString("F0"),guiStyle);
 
+        // Win : display text
         if (win) {
             guiStyle.fontSize = 40; //change the font size
             guiStyle.normal.textColor = green;
             GUI.Label(new Rect(40,30,50,25), "VOUS AVEZ GAGNE",guiStyle);
         }
+        // TimeUp : display text
         else if (timesUp){
             guiStyle.fontSize = 40; //change the font size
             guiStyle.normal.textColor = red;
@@ -145,6 +150,7 @@ public class Manager : MonoBehaviour
     // verifier que les atomes sont bien placés
     // se déclenche au clic sur le bouton (sinon mettre dans update pr une vérif en continu)
     public void check () {
+        // Get booleans good and placed from Each atom script
         good1 = HydroAtome1.GetComponent<NewDD>().getGood();
         placedHydro1 = HydroAtome1.GetComponent<NewDD>().getPlaced();
 
@@ -155,7 +161,9 @@ public class Manager : MonoBehaviour
         placedHydro2 = HydroAtome2.GetComponent<NewDD>().getPlaced();
 
         //Debug.Log("1:"+placedHydro1+""+placedHydro2+""+placedOxy);
+        // if all atoms are placed 
         if (placedHydro1 && placedHydro2 && placedOxy && time > 0) {
+            // if all atoms are on the right place => yesssss !
             if (good1 && good2 && good3) {
                 //Debug.Log("WIN");
                 WallE.GetComponent<Renderer>().material.color=green;
@@ -163,20 +171,11 @@ public class Manager : MonoBehaviour
                 WallS.GetComponent<Renderer>().material.color=green;
                 WallW.GetComponent<Renderer>().material.color=green;
                 win = true;
-                //LED
-                //socket = IO.Socket ("http://localhost:8080");
-                
-                /*IEnumerator ExecuteAfterTime(float time)
-                {
-                    yield return new WaitForSeconds(time);
-                
-                    // Code to execute after the delay
-                    socket.Disconnect ();
-                }
-                StartCoroutine(ExecuteAfterTime(10));*/
+
                 
                 
             }
+            // Otherwise wrong conformation => walls in red+ send a message to node
             else {
                 Debug.Log("Not OK-RED");
                 WallE.GetComponent<Renderer>().material.color=red;
@@ -189,11 +188,9 @@ public class Manager : MonoBehaviour
                 WallS.GetComponent<Renderer>().material.color=white;
                 WallW.GetComponent<Renderer>().material.color=white;*/
 
-                // Led
-                //LED
-                //socket = IO.Socket ("http://localhost:8080");
 
-                
+                // Send message to arduino
+                // We need to bind bc EVENT_CONNECT do not care about conditionnal statements
                 if (!win) {
                     socket.On (QSocket.EVENT_CONNECT, () => {
                         if (!win) {
@@ -206,21 +203,10 @@ public class Manager : MonoBehaviour
                         Debug.Log ("data : " + data);
                     });
                 }
-                
-
-                /*IEnumerator ExecuteAfterTime(float time)
-                {
-                    yield return new WaitForSeconds(time);
-                
-                    // Code to execute after the delay
-                    socket.Disconnect ();
-                }
-                StartCoroutine(ExecuteAfterTime(10));*/
-
-
-
             }
         }
+
+        // Walls back to white
         else if (time > 0) {
             // Walls in white
             WallE.GetComponent<Renderer>().material.color=white;
@@ -229,6 +215,7 @@ public class Manager : MonoBehaviour
             WallN.GetComponent<Renderer>().material.color=white;
         }
 
+        // If good conformation => send a message to node
         if (win) {
             socket.On (QSocket.EVENT_CONNECT, () => {
                     if (win) {
@@ -243,6 +230,7 @@ public class Manager : MonoBehaviour
         }
     }
 
+    // manage links btw atoms
     public void ManageLink() {
         // update triggers
         HydroSpace1Triggered = HydroSpace1.GetComponent<Space>().getTriggered();
@@ -265,6 +253,7 @@ public class Manager : MonoBehaviour
         }
     }
 
+    // Update stars: remove stars as time decreases
     public void UpdateStars() {
         if (time < 30) {
             star1.SetActive(false);
@@ -276,8 +265,6 @@ public class Manager : MonoBehaviour
             star3.SetActive(false);
         }
     }
-
-
 
     // Destruction socket
     private void OnDestroy () {
